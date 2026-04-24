@@ -31,6 +31,25 @@ class Line:
         self._end_point = end_point
         self._length = self._start_point.compute_distance(self._end_point)
 
+    def compute_slope(self) -> float:
+        dy = self._end_point._y - self._start_point._y
+        dx = self._end_point._x - self._start_point._x
+        radians = math.atan2(dy, dx)
+        angle = math.degrees(radians)
+        return angle
+
+    def compute_horizontal_cross(self) -> bool:
+        if (self._end_point._y * self._start_point._y) <= 0:
+            return True
+        else:
+            return False
+
+    def compute_vertical_cross(self) -> bool:
+        if (self._end_point._x * self._start_point._x) <= 0:
+            return True
+        else:
+            return False
+        
     def get_start_point(self) -> Point:
         return self._start_point
 
@@ -45,8 +64,7 @@ class Line:
 
     def get_length(self) -> float:
         return self._length
-
-
+    
 class Shape:
     def __init__(
         self,
@@ -95,10 +113,58 @@ class Shape:
 
 
 class Rectangle(Shape):
-    def __init__(self, width: float, height: float, center_point: Point):
-        self._width = width
-        self._height = height
-        self._center_point = center_point
+    def __init__(self, **kwargs):
+        # The rectangle can be created using different combinations of parameters using the **kwargs syntax.
+        # In case 1, the rectangle is created using the width, height, and bottom left corner.
+        if "width" in kwargs and "height" in kwargs and "bottom_left_corner" in kwargs:
+            self._width = kwargs["width"]
+            self._height = kwargs["height"]
+            bottom_left_corner = kwargs["bottom_left_corner"]
+
+            center_x = bottom_left_corner.x + (
+                self._width / 2
+            )  # The center is sought at x.
+            center_y = bottom_left_corner.y + (
+                self.height / 2
+            )  # The center is sought in y.
+
+            self._center_point = Point(center_x, center_y)
+
+        # In case 2, the rectangle is created using the width, height, and center point.
+        elif "width" in kwargs and "height" in kwargs and "center_point" in kwargs:
+            self._width = kwargs["width"]
+            self._height = kwargs["height"]
+            self._center_point = kwargs["center_point"]
+
+        # In case 3, the rectangle is created using two opposite corners.
+        elif "point1" in kwargs and "point2" in kwargs:
+            self.point1 = kwargs["point1"]
+            self.point2 = kwargs["point2"]
+            width = abs(self.point2._x - self.point1._x)
+            height = abs(self.point2._y - self.point1._y)
+            center_x = (self.point1._x + self.point2._x) / 2
+            center_y = (self.point1._y + self.point2._y) / 2
+
+            self._width = width
+            self._height = height
+            self._center_point = Point(center_x, center_y)
+        # In case 4, the rectangle is created using the four lines that form it.
+        elif (
+            "bottom_line" in kwargs
+            and "top_line" in kwargs
+            and "left_line" in kwargs
+            and "right_line" in kwargs
+        ):
+            self.bottom_line = kwargs["bottom_line"]
+            self.left_line = kwargs["left_line"]
+            width = self.bottom_line.compute_length()
+            height = self.left_line.compute_length()
+
+            # We calculate the center point of the rectangle using the midpoint formula
+            center_x = (self.bottom_line.start.x + self.bottom_line.end.x) / 2
+            center_y = (self.left_line.start.y + self.left_line.end.y) / 2
+
+            # The original __init__ is reused to create the rectangle
 
         min_x = self._center_point.get_x() - int(self._width / 2)
         max_x = self._center_point.get_x() + int(self._width / 2)
@@ -127,6 +193,48 @@ class Rectangle(Shape):
             edges = self._lines,
             inner_angles = [90.0, 90.0, 90.0, 90.0],
         )
+    def compute_interference_point(self, point: Point):
+        """This fuction determinate if a point is inside the rectangle or not.
+        For this, the maximum and minimum values of x and y
+        that a point can have to be inside the rectangle are calculated.
+        """
+        Min_x = self._center_point._x - (
+            self._width / 2
+        )  # Represents the entire left edge.
+        Max_x = self._center_point._x + (
+            self._width / 2
+        )  # Represents the entire right edge.
+        Min_y = self._center_point._y - (
+            self._height / 2
+        )  # Represents the entire bottom edge.
+        Max_y = self._center_point._y + (
+            self._height / 2
+        )  # Represents the entire top edge.
+
+        """ If the given point has coordinates x and y that are within 
+        the calculated maximum and minimum values, then the point is inside
+        the rectangle and the function returns True. 
+        Otherwise, it returns False.
+        """
+
+        if Max_x >= point._x >= Min_x and Max_y >= point._y >= Min_y:
+            return True
+        else:
+            return False
+
+    def compute_interference_line(self, line: Line):
+        """Use the compute_interference_point function to determine
+        if at least one point is inside the rectangle.
+        If so, the line segment interferes with the rectangle,
+        and the function returns True. Otherwise, it returns False."""
+
+        is_start_inside = self.compute_interference_point(line.get_start_point())
+        is_end_inside = self.compute_interference_point(line.get_end_point())
+        if is_start_inside or is_end_inside:
+            return True
+        else:
+            return False
+
 
     def get_width(self) -> float:
         return self._width
@@ -257,3 +365,68 @@ class Trirectangle(Triangle):
             angles = [90.0, 45.0, 45.0],
             top_offset_x = 0,
         )
+
+
+if __name__ == "__main__":
+    rectangle = Rectangle(point1 = Point(5, -3), point2 = Point(4, 0))
+    area = rectangle.compute_area()
+    perimeter = rectangle.compute_perimeter()
+    interference = rectangle.compute_interference_point(Point(2, -1))
+    interference_line = rectangle.compute_interference_line(
+        Line(Point(0, 0), Point(5, 0))
+    )
+
+    print("RECTANGLE DATA:")
+    print(
+        f"Width: {rectangle._width} and Height: \
+          {rectangle._height}"
+    )  # Output: Width: 4.0 and Height: 4.0
+    print(
+        f"Center Point: ({rectangle._center_point.x},\
+          {rectangle._center_point.y})"
+    )  # Output: Center Point: (2.5, -1.54)
+    print(f"Area: {area}")  # Output: Area: 16.0
+    print(f"Perimeter: {perimeter}")  # Output: Perimeter: 16.0
+    print(f"Interference: {interference}")  # Output: Interference: True
+    print(f"Interference Line: {interference_line}")  # Output: Interference Line: False
+
+    print("---  test of point 2: New method with four lines (method_4) ---")
+    p1 = Point(0, 0)
+    p2 = Point(4, 0)
+    p3 = Point(0, 3)
+    p4 = Point(4, 3)
+
+    # A new rectangle is created using 4 lines
+    rect_from_lines = Rectangle(
+        bottom_line = Line(p1, p2),
+        top_line = Line(p3, p4),
+        left_line = Line(p1, p3),
+        right_line = Line(p2, p4),
+    )
+    print(f"Area: {rect_from_lines.compute_area()}")  # Output: Area: 12.0
+    print(
+        f"Perimeter: {rect_from_lines.compute_perimeter()}"
+    )  # Output: Perimeter: 14.0
+    print(f"\n{'-' * 30}")
+
+    # of the line 134 to 143 is of the class Line
+    line = Line(Point(1, 2), Point(4, 6))
+    length = Line._start_point.compute_distance()
+    slope = line.compute_slope()
+    horizontal_cross = line.compute_horizontal_cross()
+    vertical_cross = line.compute_vertical_cross()
+
+    print("\nLINES DATA: ")
+    print(f"length: {line._start_point.compute_distance()}")  # Output: length: 5.0
+    print(f"slope: {line.compute_slope()}")  # Output: slope: 53.13
+    # Output: horizontal cross: False
+    print(f"horizontal cross: {line.compute_horizontal_cross()}")
+    # Output: vertical cross: False
+    print(f"vertical cross: {line.compute_vertical_cross()}")
+
+    triangle = Triangle(start_point= Point(0, 2), height = 5.0, base = 4.25, angles = [80.0, 50.0, 50.0])
+    area = triangle.compute_area()
+    perimeter = triangle.compute_perimeter()
+    print(area)
+    print(perimeter)
+    
