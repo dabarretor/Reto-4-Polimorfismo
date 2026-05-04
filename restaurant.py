@@ -216,9 +216,8 @@ class Payment:
     def __init__(self):
         pass
 
-
-def pay(self, amount: float) -> str:
-    raise NotImplementedError("Subclases deben implementar pagar()")
+    def pay(self, amount: float) -> str:
+        raise NotImplementedError("Subclases deben implementar pagar()")
 
 
 class Card(Payment):
