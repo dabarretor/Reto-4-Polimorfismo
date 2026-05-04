@@ -4,7 +4,6 @@ We take customer orders and apply discounts depending on the combo they order.
 The program demonstrates the use of classes, composition, and inheritance in Python.
 """
 
-
 class Restaurant:
     def __init__(self, name: str, size: str):
         self._name = name
@@ -66,7 +65,6 @@ class MenuItem:
 
     def __str__(self) -> str:
         return f"{self._name} (${self._price:.2f})"
-
 
 class Order:
     def __init__(self, name: str):
@@ -142,7 +140,6 @@ class Order:
         else:
             return round(total, 2)
 
-
 class Drinks(MenuItem):
     def __init__(self, type_drink: str, size: str, name: str, price: float):
         super().__init__(name, price)
@@ -160,7 +157,6 @@ class Drinks(MenuItem):
 
     def set_size(self, value):
         self._size = value
-
 
 class PrincipalDishes(MenuItem):
     def __init__(self, dish_type: str, dish_size: str, name: str, price: float):
@@ -199,7 +195,6 @@ class Desserts(MenuItem):
     def set_portion_size(self, value):
         self._portion_size = value
 
-
 class AdditionalDishes(MenuItem):
     def __init__(self, portion_size: str, name: str, price: float):
         super().__init__(name, price)
@@ -211,43 +206,57 @@ class AdditionalDishes(MenuItem):
     def set_portion_size(self, value):
         self._portion_size = value
 
-
 class Payment:
     def __init__(self):
         pass
 
     def pay(self, amount: float) -> str:
-        raise NotImplementedError("Subclases deben implementar pagar()")
-
+        raise NotImplementedError("Subclasses must implement pay()")
 
 class Card(Payment):
     def __init__(self, number: str, cvv: int):
         super().__init__()
-        self.number = number
-        self.cvv = cvv
+        self._number = number
+        self._cvv = cvv
 
     def pay(self, amount: float) -> str:
         return f"""
-        Paying {amount} with card {self.number[-4:]}
+        Paying {amount} with card {self._number[-4:]}
         Transaction approved.
         """
 
+    def get_number(self):
+        return self._number
+
+    def set_number(self, value: str):
+        self._number = value
+
+    def get_cvv(self):
+        return self._cvv
+
+    def set_cvv(self, value: int):
+        self._cvv = value
 
 class Cash(Payment):
     def __init__(self, amount_delivered: float):
         super().__init__()
-        self.amount_delivered = amount_delivered
+        self._amount_delivered = amount_delivered
 
     def pay(self, amount: float) -> str:
-        if self.amount_delivered >= amount:
+        if self._amount_delivered >= amount:
             # genera cambio/vueltas
             return f"""    More needed to complete the payment. 
-    Change: {round(self.amount_delivered - amount, 2)}"""
+    Change: {round(self._amount_delivered - amount, 2)}"""
         else:
             return f"""Insufficient funds. 
-             {round(amount - self.amount_delivered, 2)} more needed to complete the payment.
+             {round(amount - self._amount_delivered, 2)} more needed to complete the payment.
             """
 
+    def get_amount_delivered(self):
+        return self._amount_delivered
+
+    def set_amount_delivered(self, value: float):
+        self._amount_delivered = value
 
 # test of program functionality
 if __name__ == "__main__":

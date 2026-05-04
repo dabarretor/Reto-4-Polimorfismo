@@ -24,7 +24,6 @@ class Point:
         )
         return length
 
-
 class Line:
     def __init__(self, start_point: Point, end_point: Point):
         self._start_point = start_point
@@ -49,7 +48,7 @@ class Line:
             return True
         else:
             return False
-        
+
     def get_start_point(self) -> Point:
         return self._start_point
 
@@ -64,7 +63,7 @@ class Line:
 
     def get_length(self) -> float:
         return self._length
-    
+
 class Shape:
     def __init__(
         self,
@@ -195,10 +194,11 @@ class Rectangle(Shape):
         ]
         super().__init__(
             is_regular=False,
-            vertices = [p_bottom_left, p_bottom_right, p_top_left, p_top_right],
-            edges = self._lines,
-            inner_angles = [90.0, 90.0, 90.0, 90.0],
+            vertices=[p_bottom_left, p_bottom_right, p_top_left, p_top_right],
+            edges=self._lines,
+            inner_angles=[90.0, 90.0, 90.0, 90.0],
         )
+
     def compute_interference_point(self, point: Point):
         """This function determines if a point is inside the rectangle or not.
         For this, the maximum and minimum values of x and y
@@ -241,7 +241,6 @@ class Rectangle(Shape):
         else:
             return False
 
-
     def get_width(self) -> float:
         return self._width
 
@@ -267,8 +266,7 @@ class Rectangle(Shape):
 class Square(Rectangle):
     def __init__(self, side_length: float, center_point: Point):
         super().__init__(
-            height = side_length, width = side_length, 
-            center_point = center_point
+            height=side_length, width=side_length, center_point=center_point
         )
 
 
@@ -300,10 +298,10 @@ class Triangle(Shape):
         self._lines = [self._line1, self._line2, self._line3]
 
         super().__init__(
-            is_regular = False,
-            vertices = [p1_vertex, p2_vertex, p3_vertex],
-            edges = self._lines,
-            inner_angles = angles,
+            is_regular=False,
+            vertices=[p1_vertex, p2_vertex, p3_vertex],
+            edges=self._lines,
+            inner_angles=angles,
         )
 
     def get_base(self) -> float:
@@ -331,11 +329,11 @@ class Triangle(Shape):
 class Isosceles(Triangle):
     def __init__(self, height: float, start_point: Point, side_length: float):
         super().__init__(
-            base = side_length,
-            height = height,
-            start_point = start_point,
-            angles = [80.0, 50.0, 50.0],
-            top_offset_x = side_length / 2,
+            base=side_length,
+            height=height,
+            start_point=start_point,
+            angles=[80.0, 50.0, 50.0],
+            top_offset_x=side_length / 2,
         )
 
 
@@ -343,38 +341,40 @@ class Equilateral(Triangle):
     def __init__(self, side_length: float, start_point: Point):
         height = (math.sqrt(3) / 2) * side_length
         super().__init__(
-            base = side_length,
-            height = height,
-            start_point = start_point,
-            angles = [60.0, 60.0, 60.0],
-            top_offset_x = side_length / 2,
+            base=side_length,
+            height=height,
+            start_point=start_point,
+            angles=[60.0, 60.0, 60.0],
+            top_offset_x=side_length / 2,
         )
 
 
 class Scalene(Triangle):
-    def __init__(self, base: float, height: float, start_point: Point, top_offset_x: float):
+    def __init__(
+        self, base: float, height: float, start_point: Point, top_offset_x: float
+    ):
         super().__init__(
-            base = base,
-            height = height,
-            start_point = start_point,
-            angles = [100.0, 50.0, 30.0],
-            top_offset_x = top_offset_x,
+            base=base,
+            height=height,
+            start_point=start_point,
+            angles=[100.0, 50.0, 30.0],
+            top_offset_x=top_offset_x,
         )
 
 
 class Trirectangle(Triangle):
     def __init__(self, base: float, height: float, start_point: Point):
         super().__init__(
-            base = base,
-            height = height,
-            start_point = start_point,
-            angles = [90.0, 45.0, 45.0],
-            top_offset_x = 0,
+            base=base,
+            height=height,
+            start_point=start_point,
+            angles=[90.0, 45.0, 45.0],
+            top_offset_x=0,
         )
 
 
 if __name__ == "__main__":
-    rectangle = Rectangle(point1 = Point(5, -3), point2 = Point(4, 0))
+    rectangle = Rectangle(point1=Point(5, -3), point2=Point(4, 0))
     area = rectangle.compute_area()
     perimeter = rectangle.compute_perimeter()
     interference = rectangle.compute_interference_point(Point(2, -1))
@@ -402,10 +402,10 @@ if __name__ == "__main__":
 
     # A new rectangle is created using 4 lines
     rect_from_lines = Rectangle(
-        bottom_line = Line(p1, p2),
-        top_line = Line(p3, p4),
-        left_line = Line(p1, p3),
-        right_line = Line(p2, p4),
+        bottom_line=Line(p1, p2),
+        top_line=Line(p3, p4),
+        left_line=Line(p1, p3),
+        right_line=Line(p2, p4),
     )
     print(f"Area: {rect_from_lines.compute_area()}")  # Output: Area: 12.0
     print(
@@ -427,11 +427,16 @@ if __name__ == "__main__":
     # Output: vertical cross: False
     print(f"vertical cross: {line.compute_vertical_cross()}")
     print(f"\n{'-' * 30}")
-    
+
     print("\nTRIANGLE DATA:")
-    triangle = Triangle(start_point= Point(0, 2), height = 5.0, base = 4.25, angles = [80.0, 50.0, 50.0], top_offset_x = 2.0)
+    triangle = Triangle(
+        start_point=Point(0, 2),
+        height=5.0,
+        base=4.25,
+        angles=[80.0, 50.0, 50.0],
+        top_offset_x=2.0,
+    )
     area = triangle.compute_area()
     perimeter = triangle.compute_perimeter()
     print(f"Area: {round(area, 2)}")  # Output: Area: 10.62
     print(f"Perimeter: {round(perimeter, 2)}")  # Output: Perimeter: 15.12
-    
