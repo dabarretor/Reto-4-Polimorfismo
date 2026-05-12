@@ -1,5 +1,6 @@
 import math
 
+
 class Point:
     def __init__(self, x: float, y: float):
         self._x = x
@@ -23,6 +24,7 @@ class Point:
             + ((other_point.get_y() - self.get_y()) ** 2)
         )
         return length
+
 
 class Line:
     def __init__(self, start_point: Point, end_point: Point):
@@ -63,6 +65,7 @@ class Line:
 
     def get_length(self) -> float:
         return self._length
+
 
 class Shape:
     def __init__(

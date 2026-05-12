@@ -4,6 +4,7 @@ We take customer orders and apply discounts depending on the combo they order.
 The program demonstrates the use of classes, composition, and inheritance in Python.
 """
 
+
 class Restaurant:
     def __init__(self, name: str, size: str):
         self._name = name
@@ -65,6 +66,7 @@ class MenuItem:
 
     def __str__(self) -> str:
         return f"{self._name} (${self._price:.2f})"
+
 
 class Order:
     def __init__(self, name: str):
@@ -140,6 +142,7 @@ class Order:
         else:
             return round(total, 2)
 
+
 class Drinks(MenuItem):
     def __init__(self, type_drink: str, size: str, name: str, price: float):
         super().__init__(name, price)
@@ -157,6 +160,7 @@ class Drinks(MenuItem):
 
     def set_size(self, value):
         self._size = value
+
 
 class PrincipalDishes(MenuItem):
     def __init__(self, dish_type: str, dish_size: str, name: str, price: float):
@@ -195,6 +199,7 @@ class Desserts(MenuItem):
     def set_portion_size(self, value):
         self._portion_size = value
 
+
 class AdditionalDishes(MenuItem):
     def __init__(self, portion_size: str, name: str, price: float):
         super().__init__(name, price)
@@ -206,12 +211,14 @@ class AdditionalDishes(MenuItem):
     def set_portion_size(self, value):
         self._portion_size = value
 
+
 class Payment:
     def __init__(self):
         pass
 
     def pay(self, amount: float) -> str:
         raise NotImplementedError("Subclasses must implement pay()")
+
 
 class Card(Payment):
     def __init__(self, number: str, cvv: int):
@@ -237,6 +244,7 @@ class Card(Payment):
     def set_cvv(self, value: int):
         self._cvv = value
 
+
 class Cash(Payment):
     def __init__(self, amount_delivered: float):
         super().__init__()
@@ -257,6 +265,7 @@ class Cash(Payment):
 
     def set_amount_delivered(self, value: float):
         self._amount_delivered = value
+
 
 # test of program functionality
 if __name__ == "__main__":
